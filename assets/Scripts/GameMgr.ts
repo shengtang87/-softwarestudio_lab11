@@ -112,7 +112,9 @@ export default class GameMgr extends cc.Component
 
                     // ===================== TODO =====================
                     // 1. When user releases mouse, you should unschedule "gatherEnergy" function.
+                    this.unschedule(this.gatherEnergy)
                     // 2. Call the "playerJump" function in Player.ts with "this.energyValue * 50" as parameter.
+                    this.player.playerJump(this.energyValue * 50);
                     // ================================================
                 }
             }
@@ -127,6 +129,7 @@ export default class GameMgr extends cc.Component
             this.gathering = false;
             // ===================== TODO =====================
             // 1. When player falls down,  you should unschedule "gatherEnergy" function.
+            this.unschedule(this.gatherEnergy)
             // ================================================
         }else{
             if(this.mouseDown && !this.gathering)
@@ -134,6 +137,8 @@ export default class GameMgr extends cc.Component
                 this.gathering = true;
                 // ===================== TODO =====================
                 // 1. When user presses mouse,  you should call "gatherEnergy" function every 0.05s.
+                this.schedule(this.gatherEnergy, 0.05);
+
                 // ================================================
             }
         }

@@ -1,6 +1,6 @@
 
 (function () {
-var scripts = [{"deps":{"./assets/Scripts/Platform":1,"./assets/migration/use_reversed_rotateTo":2,"./assets/Scripts/GameMgr":3,"./assets/Scripts/Player":4},"path":"preview-scripts/__qc_index__.js"},{"deps":{},"path":"preview-scripts/assets/Scripts/Platform.js"},{"deps":{},"path":"preview-scripts/assets/migration/use_reversed_rotateTo.js"},{"deps":{"./Player":4},"path":"preview-scripts/assets/Scripts/GameMgr.js"},{"deps":{},"path":"preview-scripts/assets/Scripts/Player.js"}];
+var scripts = [{"deps":{"./assets/Scripts/Player":1,"./assets/migration/use_reversed_rotateTo":2,"./assets/Scripts/GameMgr":3,"./assets/Scripts/Platform":4},"path":"preview-scripts/__qc_index__.js"},{"deps":{},"path":"preview-scripts/assets/Scripts/Player.js"},{"deps":{},"path":"preview-scripts/assets/migration/use_reversed_rotateTo.js"},{"deps":{"./Player":1},"path":"preview-scripts/assets/Scripts/GameMgr.js"},{"deps":{},"path":"preview-scripts/assets/Scripts/Platform.js"}];
 var entries = ["preview-scripts/__qc_index__.js"];
 var bundleScript = 'preview-scripts/__qc_bundle__.js';
 

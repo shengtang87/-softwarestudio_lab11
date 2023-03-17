@@ -13,25 +13,6 @@ var Platform = /** @class */ (function (_super) {
         _this.moveSpeed = 50;
         _this.camera = null;
         return _this;
-        // ===================== TODO =====================
-        // 1. In the physics lecture, we know that Cocos Creator
-        //    provides four contact callbacks. You need to use callbacks to
-        //    design different behaviors for different platforms.
-        //
-        //    Hints: The callbacks are "onBeginContact", "onEndContact", "onPreSolve", "onPostSolve".
-        //
-        // 2. There are two different types of platforms: "Normal" & Conveyor".
-        //    For "Conveyor", you have to do "delivery effect" when player is in contact with it.
-        //    Note that the platforms have "delivery effect" only when player stands on them. 
-        //
-        //    Hints: Change "linearVelocity" of the player's rigidbody to make him move.
-        //    The move value is "moveSpeed".
-        //
-        // 3. All the platforms have only "upside" collision. You have to prevent the collisions from the other directions.
-        //
-        //    Hints: You can use "contact.getWorldManifold().normal" to judge collision direction.
-        //
-        // ================================================
     }
     Platform.prototype.start = function () {
         this.anim = this.getComponent(cc.Animation);
@@ -61,7 +42,20 @@ var Platform = /** @class */ (function (_super) {
         this.node.destroy();
     };
     Platform.prototype.platformMove = function (moveDir, delayTime) {
+        var _this = this;
         var easeRate = 2;
+        var action;
+        var seq1 = cc.sequence(cc.moveBy(2, 0, 50).easing(cc.easeInOut(easeRate)), cc.moveBy(2, 0, -50).easing(cc.easeInOut(easeRate)));
+        var seq2 = cc.sequence(cc.moveBy(2, 50, 0).easing(cc.easeInOut(easeRate)), cc.moveBy(2, -50, 0).easing(cc.easeInOut(easeRate)));
+        if (moveDir == "v") {
+            action = cc.repeatForever(seq1);
+        }
+        else {
+            action = cc.repeatForever(seq2);
+        }
+        this.scheduleOnce(function () {
+            _this.node.runAction(action);
+        }, delayTime);
         // ===================== TODO =====================
         // 1. Make platform move back and forth. You should use moveDir to decide move direction.
         //    'v' for vertical, and 'h' for horizontal.
@@ -71,6 +65,47 @@ var Platform = /** @class */ (function (_super) {
         //    You need to use "easeInOut" to modify your action with "easeRate" as parameter.
         // 3. Use scheduleOnce with delayTime to run this action. 
         // ================================================
+    };
+    // ===================== TODO =====================
+    // 1. In the physics lecture, we know that Cocos Creator
+    //    provides four contact callbacks. You need to use callbacks to
+    //    design different behaviors for different platforms.
+    //
+    //    Hints: The callbacks are "onBeginContact", "onEndContact", "onPreSolve", "onPostSolve".
+    //
+    // 2. There are two different types of platforms: "Normal" & Conveyor".
+    //    For "Conveyor", you have to do "delivery effect" when player is in contact with it.
+    //    Note that the platforms have "delivery effect" only when player stands on them. 
+    //
+    //    Hints: Change "linearVelocity" of the player's rigidbody to make him move.
+    //    The move value is "moveSpeed".
+    //
+    // 3. All the platforms have only "upside" collision. You have to prevent the collisions from the other directions.
+    //
+    //    Hints: You can use "contact.getWorldManifold().normal" to judge collision direction.
+    //
+    // ================================================
+    Platform.prototype.onBeginContact = function (contact, selfCollider, otherCollider) {
+        if (otherCollider.node.name == "player") {
+            if (contact.getWorldManifold().normal.y != 1 || contact.getWorldManifold().normal.x != 0) {
+                contact.disabled = true;
+            }
+        }
+    };
+    Platform.prototype.onPreSolve = function (contact, selfCollider, otherCollider) {
+        if (otherCollider.node.name == "player") {
+            if (contact.getWorldManifold().normal.y != 1 || contact.getWorldManifold().normal.x != 0) {
+                contact.disabled = true;
+            }
+            if (this.node.name == "Conveyor") {
+                otherCollider.getComponent(cc.RigidBody).linearVelocity = cc.v2(this.moveSpeed, otherCollider.getComponent(cc.RigidBody).linearVelocity.y);
+            }
+        }
+    };
+    Platform.prototype.onEndContact = function (contact, selfCollider, otherCollider) {
+        if (this.node.name == "Conveyor") {
+            otherCollider.getComponent(cc.RigidBody).linearVelocity = cc.v2(contact.moveSpeed, otherCollider.getComponent(cc.RigidBody).linearVelocity.y);
+        }
     };
     Platform = __decorate([
         ccclass

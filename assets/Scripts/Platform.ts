@@ -51,6 +51,17 @@ export default class Platform extends cc.Component {
     platformMove(moveDir: string, delayTime: number)
     {
         let easeRate: number = 2;
+        let action: cc.Action;
+        var seq1=cc.sequence(cc.moveBy(2,0,50).easing(cc.easeInOut(easeRate)),cc.moveBy(2,0,-50).easing(cc.easeInOut(easeRate)));
+        var seq2=cc.sequence(cc.moveBy(2,50,0).easing(cc.easeInOut(easeRate)),cc.moveBy(2,-50,0).easing(cc.easeInOut(easeRate)));
+        if(moveDir=="v"){
+            action=cc.repeatForever(seq1);
+        }else{
+            action=cc.repeatForever(seq2);
+        }
+        this.scheduleOnce(()=>{
+            this.node.runAction(action)
+        },delayTime)
         // ===================== TODO =====================
         // 1. Make platform move back and forth. You should use moveDir to decide move direction.
         //    'v' for vertical, and 'h' for horizontal.
@@ -81,4 +92,30 @@ export default class Platform extends cc.Component {
   //    Hints: You can use "contact.getWorldManifold().normal" to judge collision direction.
   //
   // ================================================
+  onBeginContact(contact, selfCollider, otherCollider){
+    if(otherCollider.node.name == "player"){
+      if(contact.getWorldManifold().normal.y!=1||contact.getWorldManifold().normal.x!=0){
+        contact.disabled=true;
+      }
+    }
+  }
+
+  onPreSolve(contact, selfCollider, otherCollider){
+    if(otherCollider.node.name == "player")
+    {
+      if(contact.getWorldManifold().normal.y!=1||contact.getWorldManifold().normal.x!=0){
+        contact.disabled=true;
+      }
+      if(this.node.name=="Conveyor"){
+        otherCollider.getComponent(cc.RigidBody).linearVelocity=cc.v2(this.moveSpeed,otherCollider.getComponent(cc.RigidBody).linearVelocity.y);
+      }
+    }
+  }
+
+  
+  onEndContact(contact, selfCollider, otherCollider){
+    if(this.node.name=="Conveyor"){
+      otherCollider.getComponent(cc.RigidBody).linearVelocity=cc.v2(contact.moveSpeed,otherCollider.getComponent(cc.RigidBody).linearVelocity.y);
+    }
+  }
 }
